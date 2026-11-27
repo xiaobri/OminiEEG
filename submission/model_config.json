@@ -1,7 +1,7 @@
 {
   "datasets": {
     "disease_01": {
-      "architecture": "fusion",
+      "architecture": "geometry",
       "checkpoint": "checkpoints/disease_01.pt",
       "info": {
         "dataset": "disease_01",
@@ -80,7 +80,7 @@
       }
     },
     "emotion_01": {
-      "architecture": "fusion",
+      "architecture": "montage",
       "checkpoint": "checkpoints/emotion_01.pt",
       "info": {
         "dataset": "emotion_01",
@@ -137,7 +137,7 @@
       }
     },
     "emotion_02": {
-      "architecture": "fusion",
+      "architecture": "neural",
       "checkpoint": "checkpoints/emotion_02.pt",
       "info": {
         "dataset": "emotion_02",
@@ -220,7 +220,7 @@
       }
     },
     "motor_01": {
-      "architecture": "fusion",
+      "architecture": "montage",
       "checkpoint": "checkpoints/motor_01.pt",
       "info": {
         "dataset": "motor_01",
@@ -306,7 +306,7 @@
       }
     },
     "motor_02": {
-      "architecture": "fusion",
+      "architecture": "motor_aligned",
       "checkpoint": "checkpoints/motor_02.pt",
       "info": {
         "dataset": "motor_02",
@@ -350,7 +350,7 @@
       }
     },
     "reliability_01": {
-      "architecture": "fusion",
+      "architecture": "montage",
       "checkpoint": "checkpoints/reliability_01.pt",
       "info": {
         "dataset": "reliability_01",
@@ -449,7 +449,7 @@
       }
     },
     "sleep_01": {
-      "architecture": "fusion",
+      "architecture": "spectrum",
       "checkpoint": "checkpoints/sleep_01.pt",
       "info": {
         "dataset": "sleep_01",
@@ -476,7 +476,7 @@
       }
     },
     "sleep_02": {
-      "architecture": "fusion",
+      "architecture": "spectrum",
       "checkpoint": "checkpoints/sleep_02.pt",
       "info": {
         "dataset": "sleep_02",
@@ -505,7 +505,7 @@
       }
     },
     "ssvep_01": {
-      "architecture": "fusion",
+      "architecture": "public_latency",
       "checkpoint": "checkpoints/ssvep_01.pt",
       "info": {
         "dataset": "ssvep_01",
@@ -623,7 +623,7 @@
       }
     },
     "ssvep_02": {
-      "architecture": "fusion",
+      "architecture": "public_target",
       "checkpoint": "checkpoints/ssvep_02.pt",
       "info": {
         "dataset": "ssvep_02",

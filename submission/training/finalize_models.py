@@ -17,22 +17,13 @@ def public_info(task):
 def refit(task,rec,tr,out,seed,device,validation=None):
     k=rec['architecture'];ep=rec['epochs'];va=np.zeros(0,dtype='int64') if validation is None else validation
     b=ROOT/'cache'/task
+    if k in ('public_target','public_latency'):
+        from train_public_response import fit_public_response
+        return fit_public_response(task,tr,va,out,device,ep,seed,kind=k)
     if k.startswith('cbra_'):
         x=MatrixPair(np.load(b/'features-v1.npy',mmap_mode='r'),np.load(b/'foundation.npy',mmap_mode='r'))
         return fit(x,np.load(b/'y.npy'),tr,va,k[5:],device,ep,out,seed)
-    if k=='fusion':
-        from train_fusion import fit_fusion
-        return fit_fusion(task,rec,tr,out,seed,device)
-    if k=='stimulus_bag':
-        from train_stimulus_bag import fit_bag
-        return fit_bag(task,tr,va,out,device,ep,seed,threshold=rec['threshold'])
-    if k=='population':
-        from train_population import fit_population as method
-    elif k=='rocket':
-        from train_rocket import fit_rocket as method
-    elif k=='kernel':
-        from train_kernel import fit_kernel as method
-    elif k=='neural':from train_neural import fit_neural as method
+    if k=='neural':from train_neural import fit_neural as method
     elif k=='spectrum':from train_spectrum import fit_spectrum as method
     elif k=='tune':from train_tune import fit_tune as method
     elif k=='montage':from train_montage import fit_montage as method
@@ -45,7 +36,7 @@ def refit(task,rec,tr,out,seed,device,validation=None):
     elif k=='geometry':from train_geometry import fit_geometry as method
     elif k=='motor':from train_motor import fit_motor as method
     elif k=='temporal':from train_temporal import fit_temporal as method
-    elif k in ('steady','window','delay','source','evoked','canonical'):
+    elif k in ('steady','window','delay','source'):
         from train_special import fit_steady
         return fit_steady(task,tr,va,out,device,ep,seed,kind=k)
     else:raise ValueError(k)

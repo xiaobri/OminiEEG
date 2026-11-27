@@ -19,53 +19,40 @@ from geometry import Geometry
 from model import Features, Head
 from montage import Montage
 from motor import Motor
-from motor_aligned import AlignedMotor, AlignedMontage
+from motor_aligned import AlignedMotor
 from neural import EEGAdapter, compact_public
 from spectrogram import Spectrogram, SpectrumHead
 from steady import Steady, SteadyHead, global_summary
 from steady_delay import SteadyDelay
 from steady_source import SteadySource
-from steady_population import PopulationTemplates
-from steady_canonical import CanonicalTemplates
 from steady_window import SteadyWindow
 from temporal import Temporal
 from tree import evaluate
 from tune import Tuned
 
-FINE_TUNED = {"full": Full, "tune": Tuned, "montage": Montage, "motor_aligned": AlignedMotor,
-              "montage_aligned": AlignedMontage}
-SSVEP = {"steady": Steady, "window": SteadyWindow, "delay": SteadyDelay, "source": SteadySource, "evoked": PopulationTemplates, "canonical": CanonicalTemplates}
+FINE_TUNED = {"full": Full, "tune": Tuned, "montage": Montage, "motor_aligned": AlignedMotor}
+SSVEP = {"steady": Steady, "window": SteadyWindow, "delay": SteadyDelay, "source": SteadySource}
 SPATIAL = {"geometry": Geometry, "temporal": Temporal, "motor": Motor}
 SIGNAL_FIELDS = ("data", "x", "eeg", "signal", "signals", "inputs")
 
 
 class Predictor:
     def __init__(
-        self, root: Path, checkpoint: Path | dict, info: dict[str, Any], kind: str, device: str | torch.device
+        self, root: Path, checkpoint: Path, info: dict[str, Any], kind: str, device: str | torch.device
     ) -> None:
         self.info = info
         self.kind = kind
         self.device = torch.device(device)
         self.indices = list(range(len(info["label_values"])))
         self.back = self.features = self.geom = self.head = None
-        ck = checkpoint if isinstance(checkpoint, dict) else torch.load(checkpoint, map_location="cpu", weights_only=True)
-        if kind == "fusion":
-            if ck["kind"] != kind or ck["dataset"] != info["dataset"]:
-                raise ValueError("Task and fusion checkpoint differ")
-            self.factor = ck["factor"]
-            self.parts = [Predictor(root, part["state"], info, part["architecture"], device)
-                          for part in ck["parts"]]
-            if info["dataset"] == "emotion_01":
-                for part in self.parts:
-                    part.float32_inference = True
-            return
+        ck = torch.load(checkpoint, map_location="cpu", weights_only=True)
         weights = root / "assets" / "cbramod-pretrained.pth"
 
         if kind in FINE_TUNED:
             self.head = FINE_TUNED[kind](info, weights)
             params = dict(self.head.named_parameters())
             expected = {k for k, p in params.items() if p.requires_grad}
-            if kind in ("motor_aligned", "montage_aligned"):
+            if kind == "motor_aligned":
                 expected.update(("source_center", "source_filter"))
                 params.update(self.head.named_buffers())
             if set(ck["delta"]) != expected:
@@ -75,20 +62,16 @@ class Predictor:
                     params[name].copy_(value)
         else:
             self.back = Foundation(info, weights)
-            if kind == "stimulus_bag":
-                self.features = Spectrogram(info)
-                self.bag = {k: (v.to(device) if torch.is_tensor(v) else v) for k,v in ck["state"].items()}
-            elif kind == "population":
-                self.features = Spectrogram(info)
-                self.population = {name: ck[name].to(device) for name in ("cols","mean","inv","coef")}
-            elif kind == "rocket":
-                from rocket_eeg import RocketFeatures
-                self.features = RocketFeatures(info)
-                self.rocket = {name: ck["state"][name].to(device) for name in ("center","scale","coef")}
-                self.rocket_columns = [c.to(device) for c in ck["state"]["cols"]]
-            elif kind == "kernel":
-                self.features = Features(info)
-                self.kernel = {name: value.to(device) for name, value in ck["state"].items()}
+            if kind in ('public_target', 'public_latency'):
+                from latency_response import LatencyDescriptors
+                from task_response import TargetDescriptors
+                from public_response import PublicResponseHead
+                if ck['kind'] != kind or ck['dataset'] != info['dataset']:
+                    raise ValueError('Task and response checkpoint differ')
+                self.geom = (TargetDescriptors if kind == 'public_target' else LatencyDescriptors)(info)
+                self.geom.load_state_dict(ck['proto'])
+                self.head = PublicResponseHead(ck['dim'],len(self.indices))
+                self.head.load_state_dict(ck['head'])
             elif kind.startswith("cbra_"):
                 self.features = Features(info)
                 self.head = Head(ck["dim"], len(self.indices), kind[5:])
@@ -103,11 +86,7 @@ class Predictor:
             elif kind in SSVEP:
                 self.geom = SSVEP[kind](info)
                 self.geom.load_state_dict(ck["proto"])
-                head_type = SteadyHead
-                if kind == "context":
-                    from steady_context import FrequencyHead
-                    head_type = FrequencyHead
-                self.head = head_type(ck["dim"], 400, len(self.indices))
+                self.head = SteadyHead(ck["dim"], 400, len(self.indices))
                 self.head.load_state_dict(ck["head"])
             elif kind in SPATIAL:
                 self.geom = SPATIAL[kind](info)
@@ -128,40 +107,20 @@ class Predictor:
 
     @torch.inference_mode()
     def run(self, x: torch.Tensor, mask: torch.Tensor) -> torch.Tensor:
-        if self.kind == "fusion":
-            return self.parts[0].run(x, mask) + self.factor * self.parts[1].run(x, mask)
-        if self.kind in ("full", "montage", "motor_aligned", "montage_aligned"):
-            use_bf16 = (self.device.type == "cuda" and torch.cuda.is_bf16_supported()
-                        and not getattr(self, "float32_inference", False))
-            with torch.autocast(self.device.type, dtype=torch.bfloat16, enabled=use_bf16):
-                return self.head(x, mask).float()
+        if self.kind in ("full", "montage", "motor_aligned"):
+            with torch.autocast(self.device.type, enabled=False):
+                return self.head(x.float(), mask).float()
         if self.kind == "tune":
             return self.head(x, mask)
 
         public = self.back(x, mask).half().float()
+        if self.kind in ('public_target', 'public_latency'):
+            return self.head(self.geom(x,mask),global_summary(public,self.info))
         if self.kind.startswith("cbra_"):
             return self.head(torch.cat((self.features(x, mask), public), dim=1))
         if self.kind in SSVEP:
             return self.head(self.geom(x, mask), global_summary(public, self.info))
         compact = compact_public(public, self.info)
-        if self.kind == "stimulus_bag":
-            from population import population_features
-            from stimulus_bag import bag_scores
-            features = population_features(self.features(x,mask).half(), mask, compact)
-            score = bag_scores(features,self.bag) - self.bag["threshold"]
-            return torch.stack((-score,score),dim=1)
-        if self.kind == "population":
-            from population import population_features
-            features = population_features(self.features(x,mask).half(),mask,compact)[:, self.population["cols"]]
-            z = ((features - self.population["mean"]) * self.population["inv"]).clamp(-8,8) @ self.population["coef"]
-            return torch.stack((-z,z),dim=1)
-        if self.kind == "rocket":
-            selected = torch.cat((self.features(x,mask).half().float()[:,self.rocket_columns[0]],
-                                  compact[:,self.rocket_columns[1]]),dim=1)
-            return ((selected-self.rocket["center"])*self.rocket["scale"]) @ self.rocket["coef"]
-        if self.kind == "kernel":
-            from kernel_eeg import kernel_scores
-            return kernel_scores(self.features(x, mask), compact, self.kernel)
         if self.kind == "spectrum":
             return self.head(self.features(x, mask).half(), compact)
         if self.kind == "neural":
@@ -235,15 +194,15 @@ def predict(model: Predictor, batch: Any) -> torch.Tensor:
 
     x = torch.nan_to_num(x, nan=0.0, posinf=0.0, neginf=0.0)
     results = []
-    fixed_shape = model.kind == "fusion" and model.info["dataset"] == "emotion_01"
+    fixed_shape = model.kind in ("full", "montage", "motor_aligned")
     size = 8 if fixed_shape else 24
-    for i in range(0, len(x), size):
-        signal_rows, mask_rows = x[i:i+size], valid[i:i+size]
-        count = len(signal_rows)
+    for start in range(0, len(x), size):
+        signals, masks = x[start:start+size], valid[start:start+size]
+        count = len(signals)
         if fixed_shape and count < size:
-            signal_rows = torch.cat((signal_rows, signal_rows[:1].expand(size-count,-1,-1)), dim=0)
-            mask_rows = torch.cat((mask_rows, mask_rows[:1].expand(size-count,-1)), dim=0)
-        results.append(model.run(signal_rows, mask_rows)[:count])
+            signals = torch.cat((signals, signals[:1].expand(size-count,-1,-1)))
+            masks = torch.cat((masks, masks[:1].expand(size-count,-1)))
+        results.append(model.run(signals, masks)[:count])
     if not results:
         return torch.empty((0, len(model.indices)), dtype=torch.float32)
     output = torch.cat(results, 0)[:, model.indices].float().cpu()

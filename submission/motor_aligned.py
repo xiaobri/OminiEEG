@@ -3,10 +3,10 @@ import numpy as np
 import torch
 
 from full import Full
-from montage import Montage
 
 
-class SourceSpatialFilter:
+class AlignedMotor(Full):
+    checkpoint_kind = 'motor_aligned'
 
     def __init__(self, info, weights):
         super().__init__(info, weights)
@@ -57,11 +57,3 @@ class SourceSpatialFilter:
         state['source_filter'] = self.source_filter.detach().cpu()
         state['source_center'] = self.source_center.detach().cpu()
         return state
-
-
-class AlignedMotor(SourceSpatialFilter, Full):
-    checkpoint_kind = 'motor_aligned'
-
-
-class AlignedMontage(SourceSpatialFilter, Montage):
-    checkpoint_kind = 'montage_aligned'

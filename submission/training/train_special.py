@@ -15,25 +15,8 @@ def fit_steady(task,tr,va,out,device='cuda',epochs=32,seed=81,kind='steady'):
     from steady_window import SteadyWindow
     from steady_delay import SteadyDelay
     from steady_source import SteadySource
-    head_type=SteadyHead
-    if kind=='context':
-        from steady_context import SteadyContext,FrequencyHead
-        model_type,head_type=SteadyContext,FrequencyHead
-    elif kind=="canonical":
-        from steady_canonical import CanonicalTemplates
-        model_type=CanonicalTemplates
-    elif kind=="evoked":
-        from steady_population import PopulationTemplates
-        model_type=PopulationTemplates
-    elif kind=='gridphase':
-        from steady_grid import SteadyGrid
-        model_type=SteadyGrid
-    elif kind=='precision':
-        from steady_precision import SteadyPrecision
-        model_type=SteadyPrecision
-    else:
-        model_type={'steady':Steady,'window':SteadyWindow,'delay':SteadyDelay,'source':SteadySource}[kind]
-    extra={'groups':g} if kind in ('source','precision','gridphase','context','evoked','canonical') else {}
+    model_type={'steady':Steady,'window':SteadyWindow,'delay':SteadyDelay,'source':SteadySource}[kind]
+    extra={'groups':g} if kind=='source' else {}
     torch.manual_seed(seed)
     def pub(ix):
         return global_summary(torch.from_numpy(frozen[ix].astype('float32')),info).to(device)
@@ -46,7 +29,7 @@ def fit_steady(task,tr,va,out,device='cuda',epochs=32,seed=81,kind='steady'):
         scores.append(transform(tmp,test,raw,mask,device));targets.extend(y[test]);pubs.append(pub(test))
     proto=model_type(info).to(device).fit(raw,mask,y,tr,device,**extra)
     X=torch.cat(scores).to(device);Y=torch.as_tensor(targets,device=device);G=torch.cat(pubs)
-    head=head_type(X.shape[-1],G.shape[1],len(info['label_values'])).to(device)
+    head=SteadyHead(X.shape[-1],G.shape[1],len(info['label_values'])).to(device)
     head.m.copy_(X.mean((0,1)));head.s.copy_(X.std((0,1)).clamp_min(.01).reciprocal())
     head.gm.copy_(G.mean(0));head.gs.copy_(G.std(0).clamp_min(.05).reciprocal())
     nnopt=torch.optim.AdamW(head.parameters(),lr=.003,weight_decay=.04)

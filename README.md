@@ -1,13 +1,28 @@
-# OmniEEG Challenge 2026 复赛提交
+# OmniEEG Challenge 2026 复赛
 
-[下载 v4.1 完整提交包（119,886,288 字节）](https://github.com/xiaobri/OminiEEG/releases/download/v4.1/OmniEEG-semi-14.zip)
+[下载 v5.1 完整模型包（104,189,930 字节）](https://github.com/xiaobri/OminiEEG/releases/download/v5.1/OmniEEG-semi-14.zip)
 
-在比赛官网选择下载好的 `OmniEEG-semi-14.zip` 即可提交。这个附件包含 14 个任务的训练和推理代码、每个任务的 checkpoint，以及共用的 CBraMod 预训练权重。GitHub 自动生成的 Source code 压缩包仅供浏览源码。
+v5.1 是本地验证候选版本。它为七个分赛道的 14 个任务各提供一个模型。每个模型使用公开 CBraMod 权重，对每个 EEG 窗口独立计算一组类别分数。Release 附件包含训练和推理代码、14 个任务 checkpoint、公共权重及完整性清单。
 
-提交包的 SHA-256 为 `57ee7a7a7fbec5d58c3e201339dc5ab01a67639fb37b7fc7fe4277411f5aac79`。
+模型包的 SHA-256 为 `49a889fbc1cc5d5c21823963053a8302f25eb138dcd6c38c5a688504edfaac0f`。
 
-14 项任务在本地固定留出被试上的平均平衡准确率为 **63.88%**。该值是各任务三个训练种子成绩的等权平均，历史留出成绩参与过版本选择。比赛排名以主办方评测为准。
+## 本地验证
 
-- [任务 ID、checkpoint 路径和包内文件哈希](submission/manifest.json)
-- [推理接口和复训说明](submission/README.md)
-- [复赛材料与提交说明](复赛材料说明.md)
+在相同留出被试上，14 项平均平衡准确率由单模型基线的 **62.42%** 提高到 **62.97%**。SSVEP 的短窗任务从 **35.99%** 提高到 **38.83%**，长窗任务从 **89.17%** 提高到 **93.93%**。每项报告三个训练种子的平均成绩。历史留出成绩参与过版本选择。官方按七个分赛道的名次累计积分。[逐任务成绩与复训结果](validation-v5.1.md)
+
+## 在比赛环境重建权重
+
+赛事手册要求复赛使用主办方共享 GPU 池。此附件的开发设备为 RTX A6000，其官方资源池归属尚待确认。在官方实例解压附件，进入 `submission/` 目录执行以下命令，将路径替换为该实例上的公开下游数据目录、工作目录和新 ZIP 的位置。[官方参赛手册](https://challenge.omni-intel.cn/handbook.html)
+
+```bash
+python training/rebuild_all.py \
+  --downstream-dir /path/to/downstream \
+  --work-dir /path/to/work \
+  --output /path/to/OmniEEG-official.zip
+```
+
+脚本按任务配置重训全部权重，更新 manifest 的 SHA-256，并在工作目录记录训练日志和权重哈希。正式提交时使用对应共享算力作业生成的包和平台任务 ID。
+
+- [模型接口、环境及外部权重来源](submission/README.md)
+- [任务 ID、checkpoint 与哈希清单](submission/manifest.json)
+- [训练配置](submission/training/train_config.yaml)

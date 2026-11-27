@@ -10,7 +10,7 @@ from montage import Montage
 from splits import ROOT
 
 
-def fit_montage(task,tr,va,out,device='cuda',epochs=24,seed=174,model_class=Montage):
+def fit_montage(task,tr,va,out,device='cuda',epochs=24,seed=174):
     base=ROOT/'cache'/task
     info=json.loads((base/'info.json').read_text())
     raw=np.load(base/'x.npy',mmap_mode='r')
@@ -19,9 +19,7 @@ def fit_montage(task,tr,va,out,device='cuda',epochs=24,seed=174,model_class=Mont
     groups=np.load(base/'groups.npy')
     torch.manual_seed(seed)
     rng=np.random.default_rng(seed)
-    net=model_class(info,ROOT/'assets/cbramod-pretrained.pth').to(device)
-    if hasattr(net,'fit_source'):
-        net.fit_source(raw,mask,groups,tr,device)
+    net=Montage(info,ROOT/'assets/cbramod-pretrained.pth').to(device)
     rates=[.0016,3e-5,4e-5,.0007]
     opt=torch.optim.AdamW([
         dict(params=[net.offset,net.gain],lr=rates[0]),
@@ -70,7 +68,7 @@ def fit_montage(task,tr,va,out,device='cuda',epochs=24,seed=174,model_class=Mont
         if (len(va) and score>best) or (not len(va) and epoch==epochs):
             best=score
             best_epoch=epoch
-            torch.save(dict(kind=getattr(net,'checkpoint_kind','montage'),delta=net.delta()),out/'model.pt')
+            torch.save(dict(kind='montage',delta=net.delta()),out/'model.pt')
             if len(va):
                 np.savez_compressed(out/'val.npz',ids=va,logits=logits)
         if epoch%6==0:
