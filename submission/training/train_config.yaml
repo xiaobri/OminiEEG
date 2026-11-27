@@ -1,0 +1,178 @@
+{
+  "release": "public_alias_20261118_001",
+  "final_seed": 431,
+  "audit_seeds": [
+    431,
+    1907,
+    8849
+  ],
+  "backbone_sha256": "0792cb808c14e6b7a2bb2ce1dff379bc47bc54c49a779825bdfeb33bf8157178",
+  "tasks": {
+    "disease_01": {
+      "architecture": "fusion",
+      "epochs": 1,
+      "factor": 0.2879740875384276,
+      "parts": [
+        {
+          "architecture": "geometry",
+          "epochs": 1
+        },
+        {
+          "architecture": "montage",
+          "epochs": 21
+        }
+      ]
+    },
+    "disease_02": {
+      "epochs": 6,
+      "architecture": "neural"
+    },
+    "emotion_01": {
+      "architecture": "fusion",
+      "epochs": 1,
+      "factor": 1.017463540727424,
+      "parts": [
+        {
+          "architecture": "montage",
+          "epochs": 22
+        },
+        {
+          "architecture": "full",
+          "epochs": 17
+        }
+      ]
+    },
+    "emotion_02": {
+      "architecture": "fusion",
+      "epochs": 1,
+      "factor": 1.3179249655815708,
+      "parts": [
+        {
+          "architecture": "cbra_mlp",
+          "epochs": 3
+        },
+        {
+          "architecture": "neural",
+          "epochs": 11
+        }
+      ]
+    },
+    "motor_01": {
+      "architecture": "fusion",
+      "epochs": 1,
+      "factor": 0.7523391427093219,
+      "parts": [
+        {
+          "architecture": "montage",
+          "epochs": 16
+        },
+        {
+          "architecture": "neural",
+          "epochs": 18
+        }
+      ]
+    },
+    "motor_02": {
+      "architecture": "fusion",
+      "epochs": 1,
+      "factor": 6.130498734189203,
+      "parts": [
+        {
+          "architecture": "motor_aligned",
+          "epochs": 16
+        },
+        {
+          "architecture": "geometry",
+          "epochs": 1
+        }
+      ]
+    },
+    "reliability_01": {
+      "architecture": "fusion",
+      "epochs": 1,
+      "factor": 0.35273683985234955,
+      "parts": [
+        {
+          "architecture": "montage",
+          "epochs": 24
+        },
+        {
+          "architecture": "cbra_mlp",
+          "epochs": 11
+        }
+      ]
+    },
+    "reliability_02": {
+      "epochs": 6,
+      "architecture": "spectrum"
+    },
+    "sleep_01": {
+      "architecture": "fusion",
+      "epochs": 1,
+      "factor": 1.1189884724839845,
+      "parts": [
+        {
+          "architecture": "spectrum",
+          "epochs": 22
+        },
+        {
+          "architecture": "neural",
+          "epochs": 21
+        }
+      ]
+    },
+    "sleep_02": {
+      "architecture": "fusion",
+      "epochs": 1,
+      "factor": 0.4960099604215445,
+      "parts": [
+        {
+          "architecture": "spectrum",
+          "epochs": 25
+        },
+        {
+          "architecture": "cbra_linear",
+          "epochs": 5
+        }
+      ]
+    },
+    "ssvep_01": {
+      "architecture": "fusion",
+      "epochs": 1,
+      "factor": 0.9421542271468016,
+      "parts": [
+        {
+          "architecture": "source",
+          "epochs": 3
+        },
+        {
+          "architecture": "canonical",
+          "epochs": 4
+        }
+      ]
+    },
+    "ssvep_02": {
+      "architecture": "fusion",
+      "epochs": 1,
+      "factor": 0.9597503660771364,
+      "parts": [
+        {
+          "architecture": "delay",
+          "epochs": 4
+        },
+        {
+          "architecture": "canonical",
+          "epochs": 2
+        }
+      ]
+    },
+    "stimulus_01": {
+      "epochs": 7,
+      "architecture": "spectrum"
+    },
+    "stimulus_02": {
+      "epochs": 13,
+      "architecture": "montage"
+    }
+  }
+}

@@ -1,0 +1,161 @@
+{
+  "tasks": [
+    {
+      "dataset_name": "disease_01",
+      "checkpoint": "checkpoints/disease_01.pt"
+    },
+    {
+      "dataset_name": "disease_02",
+      "checkpoint": "checkpoints/disease_02.pt"
+    },
+    {
+      "dataset_name": "emotion_01",
+      "checkpoint": "checkpoints/emotion_01.pt"
+    },
+    {
+      "dataset_name": "emotion_02",
+      "checkpoint": "checkpoints/emotion_02.pt"
+    },
+    {
+      "dataset_name": "motor_01",
+      "checkpoint": "checkpoints/motor_01.pt"
+    },
+    {
+      "dataset_name": "motor_02",
+      "checkpoint": "checkpoints/motor_02.pt"
+    },
+    {
+      "dataset_name": "reliability_01",
+      "checkpoint": "checkpoints/reliability_01.pt"
+    },
+    {
+      "dataset_name": "reliability_02",
+      "checkpoint": "checkpoints/reliability_02.pt"
+    },
+    {
+      "dataset_name": "sleep_01",
+      "checkpoint": "checkpoints/sleep_01.pt"
+    },
+    {
+      "dataset_name": "sleep_02",
+      "checkpoint": "checkpoints/sleep_02.pt"
+    },
+    {
+      "dataset_name": "ssvep_01",
+      "checkpoint": "checkpoints/ssvep_01.pt"
+    },
+    {
+      "dataset_name": "ssvep_02",
+      "checkpoint": "checkpoints/ssvep_02.pt"
+    },
+    {
+      "dataset_name": "stimulus_01",
+      "checkpoint": "checkpoints/stimulus_01.pt"
+    },
+    {
+      "dataset_name": "stimulus_02",
+      "checkpoint": "checkpoints/stimulus_02.pt"
+    }
+  ],
+  "inference": {
+    "entrypoint": "predict.py",
+    "load_model": "load_model",
+    "predict": "predict"
+  },
+  "model_code": [
+    "model.py",
+    "foundation.py",
+    "neural.py",
+    "tune.py",
+    "full.py",
+    "tree.py",
+    "geometry.py",
+    "temporal.py",
+    "steady.py",
+    "steady_window.py",
+    "steady_delay.py",
+    "steady_source.py",
+    "spectrogram.py",
+    "motor.py",
+    "montage.py",
+    "cbra/__init__.py",
+    "cbra/cbramod.py",
+    "cbra/criss_cross_transformer.py",
+    "motor_aligned.py",
+    "steady_grid.py",
+    "steady_population.py",
+    "steady_canonical.py"
+  ],
+  "model_config": "model_config.json",
+  "shared_weights": "assets/cbramod-pretrained.pth",
+  "training": {
+    "entrypoint": "training/train.py",
+    "config": "training/train_config.yaml"
+  },
+  "requirements": "requirements.txt",
+  "documentation": "README.md",
+  "file_hashes": {
+    "README.md": "0f20f9ecf2096d3ee484a4337c00cf337eaf82c01d99673d729c23b29f51abfa",
+    "assets/LICENSE-Apache-2.0.txt": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+    "assets/cbramod-pretrained.pth": "0792cb808c14e6b7a2bb2ce1dff379bc47bc54c49a779825bdfeb33bf8157178",
+    "cbra/LICENSE": "eb839b706e4d7219842e96d7dc33285844abc794292602deb3498be7b699537c",
+    "cbra/__init__.py": "33c1ef4e8d991fe863272193641758b696339c74bd16e1bdf64ced3c1de406d2",
+    "cbra/cbramod.py": "e8193e557ee3ca3f422c17ae661fb8e4df671d9228c413ea092d879af1b8296b",
+    "cbra/criss_cross_transformer.py": "90e90b8c98ca7eb543c44e32afc29674d3f71cb090692ad9f82db3a43edf334c",
+    "checkpoints/disease_01.pt": "34434b3a87bf7b024d1b923697554c45119d6937ee14210b815680a0462fc3f8",
+    "checkpoints/disease_02.pt": "e56f7dc4cb41475ce5e654eceb5dcef935f5ef734eadb0a31a5bc10ca49e0363",
+    "checkpoints/emotion_01.pt": "5051dfa5721886a9607d77c91ec0610fd54d4e18db16df5bd20894abe261bb7f",
+    "checkpoints/emotion_02.pt": "50c3431ffcece0c33455f6cad9778b038f89771c5ec8bf832a4a88d50c0caeee",
+    "checkpoints/motor_01.pt": "30751ee6659c45933af8e8329441fa27a99e2fd473aabf30bdb6a08b43023261",
+    "checkpoints/motor_02.pt": "11e7f4ff51705ce4596f3a04c1ed320c4ae1045a7a5a6dadce7ee73a810b0f21",
+    "checkpoints/reliability_01.pt": "ed70cfbabbb2bd61bfeb743756ccab140f4b35200e240dd720e684e8e7c81d01",
+    "checkpoints/reliability_02.pt": "27f612930f93bac334cd3675ca4b2131329db9a3b8cdcd32e4ccd34ed3994a0c",
+    "checkpoints/sleep_01.pt": "0eead2fe0d646d938ffd1470a1d6cea4caad760633f7d2b5ccf5daf3525d0a79",
+    "checkpoints/sleep_02.pt": "b465931f15473dde4604a4f982bbc51626ea1bbfa7177a285dd064df076a091d",
+    "checkpoints/ssvep_01.pt": "ae25b87aa8eb793545d4fee298f6822c9abcf16165769ca68b763c6ca5911224",
+    "checkpoints/ssvep_02.pt": "def98d8588215172c924e1784a8ed8f970f0a8b8c1879e7e53d3570b54dadc6c",
+    "checkpoints/stimulus_01.pt": "d588ff70dc11e3bbf9c53c0dac7357e90b2d5a90d6015e65009fbb0e15b542d5",
+    "checkpoints/stimulus_02.pt": "62e1bf3c9adde8a4e51f581f38ef5c6c112d4c8a7cdb59fd341bd89d92eb354b",
+    "foundation.py": "ca9bb47aef75c9275fc6b84bff7f76ef81fc8e1cdfc6ddcba48f52a88b5ad4ee",
+    "full.py": "aeebc50eeef95b8440bffe5975e72d904b716db641f20cda5fdf7e0061570820",
+    "geometry.py": "d3ac492872e1481683bd890283c2e2c1b04e03b7713499f8bb3fc64bc83c1012",
+    "model.py": "6aff4f47b932e5921628a5dad80ca18b92c1004e67df07c306b87d88257f24c1",
+    "model_config.json": "22c49a23b9e59d0ad8c524256720c21424195e951fdf9df654168e2e10ce679b",
+    "montage.py": "69980a7c7897493324268209e4887ac1ae37fa4e8899cc6dcc5d9565c3b4117b",
+    "motor.py": "d46000b0907ace6bc753bab3eb52ee70b642d1e6b24fc7fd8fd854ab9c5afc58",
+    "motor_aligned.py": "5b0932881de0851e168be113133140f19f95800680b31ba9d6fa69fc00258754",
+    "neural.py": "596ee2bb4ccaea978cdb53ff20fcb40b1a977c2794450366e3ee57fd3d20e314",
+    "predict.py": "5900bbc5494997df39d63aa22730c092dda1208989998458d0f88c15dc96725e",
+    "requirements.txt": "ed0751c76e14466f24e467709ffc1fc1d2d0369419626d72439e39d20d594639",
+    "spectrogram.py": "30f9230a928cebb8fd7e898434555e7b45265b6bf2e6ca0aecaf8c2a3072901d",
+    "steady.py": "7aeb3193e6ef0bdf976b4dbecadc82edb92d910507649c5ea3feb075b9784f58",
+    "steady_canonical.py": "5e8827953415cbe152cfb1b0fb0c9e5fc5913814aa5d08574e3f7772f1fc6cf3",
+    "steady_delay.py": "7051b39d2e8107abda62f42e92cfcfd04c86d2aaa3a3b015d863785622506493",
+    "steady_grid.py": "737d61344dfdfcf178eef6cc8d7892727da0c040b9ec0738d2de4c93ce3c8e58",
+    "steady_population.py": "ea6889374161fb3328cf9a94f20a72b8ea6f949f6bfcccd486ba772c6e4ae79a",
+    "steady_source.py": "0731a2cc47373e87733ef474b8f8eb4cffb2fdb571cda0a7dc6d66397f1d2223",
+    "steady_window.py": "97d8f17272d1951c1c92247cab8266b113ecd29c10d7e268af9604c612c7f9f0",
+    "temporal.py": "bbbcc1ff379918d5435665aee896cc352be67eccf9bfea63f767bd52d4c05475",
+    "training/features.py": "c28890739cc866f0b382fac16d6a3117a4fdfcc68706071abf4603d95ecf549d",
+    "training/finalize_models.py": "86955ca9c3e09210974be84da6c6e52b542aa1d8ea07ac8205f5b05301ec432c",
+    "training/prepare.py": "5c29107e6db2aa539287860e3da16afe2544257a59d89ec5e2ee5e796ca7070e",
+    "training/splits.py": "edc28e08b557aa38c2ec481a1c90436a3775f172e233a73d8a1f8ea9bc04a5ad",
+    "training/train.py": "2c91fa442e02b47f08c937d9684f336ded2130a457951b9f41fe37d98c9517ee",
+    "training/train_config.yaml": "e573ae632bb9a4e4b406f87106d30bdbb708ac9df3d079c8b668356e437827ee",
+    "training/train_features.py": "23f810e5f0b874070447174c807199bc991f3932d4c4160f0ad06ed821f2a34a",
+    "training/train_foundation.py": "a2521cf14bbd5291052c4b4a0286dd692dade3c414d9f51c1afb137f70bc71ef",
+    "training/train_full.py": "26e4d2acd515daf50601773305f256a558da17c6da8427886f712a1937bf97c5",
+    "training/train_fusion.py": "4746328bf9350c1f75a7306ebdfcf25aa7258ce8da39c9c92b63de752560f4f8",
+    "training/train_geometry.py": "fd25b8281003db6f7da6c6a2d1c9ab71481f673f54947ca5cdb0b8f2ef9048b3",
+    "training/train_montage.py": "7dcc8d1732be8b8966017b469aa0e1172cf66bd74f01bdfd6a290a8c54ed06ab",
+    "training/train_motor.py": "de131c978a69e207da7ab744663f5977acb0a18416356d3145fbf8e3154d54e4",
+    "training/train_neural.py": "3b50234e1414c21984d072df88fc4ed38e3f303723136f14b2e6c2e2146a536b",
+    "training/train_special.py": "6ea74744eb69b0653a9ed15e2b736391eb21cd6f022317281e8fe47651e3fe7e",
+    "training/train_spectrum.py": "af1b7b2ee0280f2a97fa495756133fb6eb1663df962b397618d750e6aaea33e6",
+    "training/train_temporal.py": "20c7be9fe7cf1901f1396bdc6a0fc8adb8bf56795ff907b8440c8a7e69d15094",
+    "training/train_tree.py": "8b394d60ace460d19999ff1768fab730f6b3b3261249cde2c5e4961271c5919d",
+    "training/train_tune.py": "1f27e387cec26e33d26d0d4e30a58853aa2be889311c04f04d6dd9c21f226a0f",
+    "tree.py": "f16cd3147ab987eaac6be3525d9f3c86a1c189d19c12e0dd943f19a42c3df604",
+    "tune.py": "69458bda9b9d8b328763181cee0fce637b4bdc0cbafd39eac82764615802da2b"
+  }
+}
